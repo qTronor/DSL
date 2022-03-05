@@ -6,7 +6,7 @@ import java.util.Map;
 public class TokenType {
 
     static Map<String, String> lexemes = new HashMap<>();
-    //static Map<String, String> lexemes_key_words = new HashMap<>();
+    static Map<String, String> lexemes_key_words = new HashMap<>();
 
     public TokenType() {
         lexemes.put("VAR", "[a-z][a-z0-9]*");
@@ -22,11 +22,11 @@ public class TokenType {
         lexemes.put("END_LINE", ";");
         lexemes.put("SPACE", " ");
 
-        /*
+
         lexemes_key_words.put("IF_KW", "if");
         lexemes_key_words.put("FOR_KW", "for");
         lexemes_key_words.put("WHILE_KW", "while");
-        */
+
 
     }
 }
