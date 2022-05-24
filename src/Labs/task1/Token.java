@@ -2,10 +2,21 @@ package Labs.task1;
 
 public class Token {
     String type;
-    String text;
+    String  value;
 
-    public Token(String type, String text){
+    public Token(String type, String value){
         this.type = type;
-        this.text = text;
+        this.value = value;
+    }
+
+    public String getType() { return type; }
+
+    public String getToken() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return "Token " + this.type + " : " + this.value + " ";
     }
 }
