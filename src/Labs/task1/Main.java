@@ -10,7 +10,7 @@ public class Main {
     static String getCode() throws GrammarException {
         String src = "";
         try {
-            File file = new File("C:/Users/Home/IdeaProjects/Labs_for_DoDSPL/src/Labs/task1/res/EX.txt"); //создание объекта с файлом
+            File file = new File("C:/Users/Home/IdeaProjects/Labs_for_DoDSPL/res/EX.txt"); //создание объекта с файлом
 
             if (!file.exists()) file.createNewFile(); //создание файла, если его нет
 
