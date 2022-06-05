@@ -35,7 +35,7 @@ public class Parser {
     public void body() {
         switch (curToken.getType()) {
             case "VAR" -> {
-                if (Objects.equals(tokens.get(iterator + 1).getType(), "POINT")) { // Работа со списком
+                if (Objects.equals(tokens.get(iterator + 1).getType(), "DOT")) { // Работа со списком
                     list_op();
                 } else {
                     expr_assign();  // Присваивание
@@ -86,7 +86,7 @@ public class Parser {
 
     public void expr_value() {
         switch (curToken.getType()) {
-            case "VAR", "DIGIT" -> value();
+            case "VAR", "INT" -> value();
             case "L_BC" -> infinityBR();
             default -> checkError("VAR");
         }
@@ -98,7 +98,7 @@ public class Parser {
 
     public void value() {
         switch (curToken.getType()) {
-            case "DIGIT" -> checkError("DIGIT");
+            case "INT" -> checkError("INT");
             case "L_BC" -> infinityBR();
             default -> checkError("VAR");
         }
@@ -165,9 +165,9 @@ public class Parser {
         checkError("FOR");
         checkError("L_BC");
         assign();
-        checkError("DIV");
+        checkError("COMMA");
         condition();
-        checkError("DIV");
+        checkError("COMMA");
         assign();
         checkError("R_BC");
         do {
@@ -182,8 +182,8 @@ public class Parser {
     }
     public void expr_assign() {
         assign();
-        while ("DIV".equals(curToken.getType())) {
-            checkError("DIV");
+        while ("COMMA".equals(curToken.getType())) {
+            checkError("COMMA");
             assign();
         }
     }
@@ -192,8 +192,8 @@ public class Parser {
         checkError("PRINT");
         if ("L_BC".equals(curToken.getType())) {
             checkError("L_BC");
-            if ("DIGIT".equals(curToken.getType())) {
-                checkError("DIGIT");
+            if ("INT".equals(curToken.getType())) {
+                checkError("INT");
             } else {
                 checkError("VAR");
             }
@@ -208,22 +208,19 @@ public class Parser {
 
     public void list_op() {
         checkError("VAR");
-        checkError("POINT");
+        checkError("DOT");
         switch (curToken.getType()) {
             case "REMOVE" -> checkError("REMOVE");
             case "CLEAR" -> checkError("CLEAR");
-            case "SIZE" -> checkError("SIZE");
             case "GET" -> checkError("GET");
             case "ISEMPTY" -> checkError("ISEMPTY");
-            case "CONTAINS" -> checkError("CONTAINS");
             default -> checkError("ADD");
         }
         checkError("L_BC");
-        if ("DIGIT".equals(curToken.getType())) {
-            checkError("DIGIT");
+        if ("INT".equals(curToken.getType())) {
+            checkError("INT");
         }
         checkError("R_BC");
     }
     /*------------------------------------------------------------------------------*/
-
 }

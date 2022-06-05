@@ -2,33 +2,32 @@ package Labs.task1;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class TokenType {
-
-    static Map<String, String> lexemes = new HashMap<>();
-    static Map<String, String> lexemes_key_words = new HashMap<>();
-
-    public TokenType() {
-        lexemes.put("VAR", "[a-z][a-z0-9]*");
-        lexemes.put("STRING", "\"[0-9a-zA-Z*\\/&s ]*\"|str(\"[0-9a-zA-Z*\\/&s ]*\")");
-        lexemes.put("INT", "int([1-9][0-9]*)|[1-9][0-9]*|0");
-        lexemes.put("L_BRACKET", "\\(");
-        lexemes.put("R_BRACKET", "\\)");
-        lexemes.put("L_BRACE", "\\{");
-        lexemes.put("R_BRACE", "}");
-        lexemes.put("R_SQUARE_BRACKET", "\\]");
-        lexemes.put("L_SQUARE_BRACKET", "\\[");
-        lexemes.put("ASSIGN_OP", "=");
-        lexemes.put("END_LINE", ";");
-        lexemes.put("SPACE", " ");
-
-
-        lexemes_key_words.put("IF_KW", "if");
-        lexemes_key_words.put("FOR_KW", "for");
-        lexemes_key_words.put("WHILE_KW", "while");
-
-
+    static Map<String, Pattern> lexemes = new HashMap<>();
+    public TokenType(){
+        lexemes.put("VAR", Pattern.compile("^[a-z_]\\w*$"));
+        lexemes.put("INT", Pattern.compile("^\\d*$"));
+        lexemes.put("ASSIGN_OP", Pattern.compile("^=$"));
+        lexemes.put("OP", Pattern.compile("^(-|\\+|\\*|/)$"));
+        lexemes.put("L_BC", Pattern.compile("^\\($"));
+        lexemes.put("R_BC", Pattern.compile("^\\)$"));
+        lexemes.put("ENDL", Pattern.compile("^;$"));
+        lexemes.put("COMPARE_OP", Pattern.compile("^(~|<|>|!=)$"));
+        lexemes.put("IF", Pattern.compile("^IF$"));
+        lexemes.put("ELSE", Pattern.compile("^ELSE$"));
+        lexemes.put("WHILE", Pattern.compile("^WHILE$"));
+        lexemes.put("DO", Pattern.compile("^DO$"));
+        lexemes.put("FOR", Pattern.compile("^FOR$"));
+        lexemes.put("COMMA", Pattern.compile("^,$"));
+        lexemes.put("PRINT", Pattern.compile("^print$"));
+        lexemes.put("LIST", Pattern.compile("^LIST$"));
+        lexemes.put("ADD", Pattern.compile("^add$"));
+        lexemes.put("REMOVE", Pattern.compile("^remove$"));
+        lexemes.put("CLEAR", Pattern.compile("^CLEAR$"));
+        lexemes.put("GET", Pattern.compile("^GET$"));
+        lexemes.put("ISEMPTY", Pattern.compile("^ISEMPTY$"));
+        lexemes.put("DOT", Pattern.compile("^\\.$"));
     }
 }
-
-

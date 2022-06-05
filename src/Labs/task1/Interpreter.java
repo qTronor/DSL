@@ -12,31 +12,30 @@ public class Interpreter {
     private boolean transCondition;
 
     private int operationPriority(Token op) {
-        return switch (op.getToken()) {
+        return switch (op.getValue()) {
             case "(" -> 0;
             case "+", "-" -> 1;
             case "*", "/" -> 2;
-            default -> throw new IllegalArgumentException("Illegal value: " + op.getToken());
+            default -> throw new IllegalArgumentException("Illegal value: " + op.getValue());
         };
     }
 
     private double execute(Token op, double first, double second) {
-        return switch (op.getToken()) {
+        return switch (op.getValue()) {
             case "+" -> first + second;
             case "-" -> first - second;
             case "*" -> first * second;
             case "/" -> first / second;
-            default -> throw new IllegalArgumentException("Illegal value: " + op.getToken());
+            default -> throw new IllegalArgumentException("Illegal value: " + op.getValue());
         };
     }
 
     private boolean compare(Token comp, double first, double second) {
-        return switch (comp.getToken()) {
+        return switch (comp.getValue()) {
             case ">" -> Double.compare(first, second) == 1;
-            case "~" -> Double.compare(first, second) == 0;
             case "<" -> Double.compare(first, second) == -1;
             case "!=" -> Double.compare(first, second) != 0;
-            default -> throw new IllegalArgumentException("Illegal value: " + comp.getToken());
+            default -> throw new IllegalArgumentException("Illegal value: " + comp.getValue());
         };
     }
 
@@ -57,8 +56,8 @@ public class Interpreter {
                 case "DO" -> DoTranslate();
                 case "FOR" -> forTranslate();
                 case "PRINT" -> printTranslate();
-                case "LIST" -> variables.put(infixExpr.get(iterator + 1).getToken(), new LinkedList());
-                case "POINT" -> listOperationTranslate();
+                case "LIST" -> variables.put(infixExpr.get(iterator + 1).getValue(), new LinkedList());
+                case "DOT" -> listOperationTranslate();
             }
         }
     }
@@ -121,7 +120,7 @@ public class Interpreter {
     private void forTranslate() {
         iterator += 3;
         currentToken = infixExpr.get(iterator);
-        valueTranslate("DIV");
+        valueTranslate("COMMA");
 
         iterator--;
         int condition = iterator;
@@ -157,8 +156,8 @@ public class Interpreter {
         if ("L_BC".equals(currentToken.getType())) {
             Token c = infixExpr.get(iterator + 1);
             switch (c.getType()) {
-                case "DIGIT" -> System.out.println(Double.parseDouble(c.getToken()));
-                case "VAR" -> System.out.println(variables.get(c.getToken()));
+                case "INT" -> System.out.println(Double.parseDouble(c.getValue()));
+                case "VAR" -> System.out.println(variables.get(c.getValue()));
             }
             iterator += 2;
         } else {
@@ -167,21 +166,19 @@ public class Interpreter {
     }
 
     private void listOperationTranslate() {
-        LinkedList a = (LinkedList) variables.get(infixExpr.get(iterator - 1).getToken());
-        Token op = infixExpr.get(iterator + 1);
-        switch (op.getType()) {
-            case "ADD", "REMOVE", "GET", "CONTAINS" -> {
-                double value = Double.parseDouble(infixExpr.get(iterator + 3).getToken());
-                switch (op.getType()) {
-                    case "ADD" -> a.add(value);
-                    case "REMOVE" -> a.remove(value);
-                    case "GET" -> a.get((int) value);
-                    case "CONTAINS" -> System.out.println(a.contains(value));
+        LinkedList listObj = (LinkedList) variables.get(infixExpr.get(iterator - 1).getValue());
+        Token listFunc = infixExpr.get(iterator + 1);
+        switch (listFunc.getType()) {
+            case "ADD", "REMOVE" -> {
+                double value = Double.parseDouble(infixExpr.get(iterator + 3).getValue());
+                switch (listFunc.getType()) {
+                    case "ADD" -> listObj.add(value);
+                    case "REMOVE" -> listObj.remove(value);
+                    case "GET" -> listObj.get((int) value);
                 }
             }
-            case "CLEAR" -> a.clear();
-            case "SIZE" -> System.out.println(a.size());
-            case "ISEMPTY" -> System.out.println(a.isEmpty());
+            case "CLEAR" -> listObj.clear();
+            case "ISEMPTY" -> System.out.println(listObj.isEmpty());
         }
     }
 
@@ -190,9 +187,9 @@ public class Interpreter {
         int startExpr = iterator + 1;
 
         while (!trans.equals(currentToken.getType())) {
-            if ("DIV".equals(currentToken.getType())) {
+            if ("COMMA".equals(currentToken.getType())) {
                 double rez = calc(convertToPostfix(infixExpr, startExpr, iterator));
-                variables.put(infixExpr.get(indexVar).getToken(), rez);
+                variables.put(infixExpr.get(indexVar).getValue(), rez);
                 indexVar = iterator + 1;
                 startExpr = iterator + 3;
             }
@@ -201,7 +198,7 @@ public class Interpreter {
         }
 
         double rez = calc(convertToPostfix(infixExpr, startExpr, iterator));
-        variables.put(infixExpr.get(indexVar).getToken(), rez);
+        variables.put(infixExpr.get(indexVar).getValue(), rez);
     }
 
     private void interpret_condition() {
@@ -209,10 +206,10 @@ public class Interpreter {
         int comparison_op_index = iterator + 3;
         int second_argument_index = iterator + 4;
         Token s = infixExpr.get(second_argument_index);
-        double first = (double) variables.get(infixExpr.get(first_argument_index).getToken());
+        double first = (double) variables.get(infixExpr.get(first_argument_index).getValue());
         double second = switch (s.getType()) {
-            case "DIGIT" -> Double.parseDouble(s.getToken());
-            case "VAR" -> (double) variables.get(s.getToken());
+            case "INT" -> Double.parseDouble(s.getValue());
+            case "VAR" -> (double) variables.get(s.getValue());
             default ->  0.0;
         };
 
@@ -223,52 +220,50 @@ public class Interpreter {
     }
 
     private ArrayList<Token> convertToPostfix(ArrayList<Token> infixExpr, int start, int end) {
-        ArrayList<Token> postfixExpr = new ArrayList<>(); // Выходная строка, содержащая постфиксную запись
-        Stack<Token> stack = new Stack<>(); // Инициализация стека, содержащий операторы в виде символов
-        //	Перебираем строку
+        ArrayList<Token> postfixExpr = new ArrayList<>();
+        Stack<Token> stack = new Stack<>();
+
         for (int i = start; i < end; i++) {
-            Token c = infixExpr.get(i); // Текущий токен
+            Token c = infixExpr.get(i);
             switch (c.getType()) {
-                case "DIGIT", "VAR" -> postfixExpr.add(c); // Если токен - цифра
-                case "L_BC" -> stack.push(c); // Если открывающаяся скобка заносим её в стек
-                case "R_BC" -> { //	Если закрывающая скобка
-                    //	Заносим в выходную строку из стека всё вплоть до открывающей скобки
+                case "INT", "VAR" -> postfixExpr.add(c);
+                case "L_BC" -> stack.push(c);
+                case "R_BC" -> {
                     while (stack.size() > 0 && !"L_BC".equals(stack.peek().getType()))
                         postfixExpr.add(stack.pop());
-                    stack.pop(); //	Удаляем открывающуюся скобку из стека
+                    stack.pop();
                 }
-                case "OP" -> {  //	Проверяем, содержится ли символ в списке операторов
+                case "OP" -> {
                     while (stack.size() > 0 && (operationPriority(stack.peek()) >= operationPriority(c))) {
                         postfixExpr.add(stack.pop());
-                    } // Заносим в выходную строку все операторы из стека, имеющие более высокий приоритет
-                    stack.push(c); // Заносим в стек оператор
+                    }
+                    stack.push(c);
                 }
             }
         }
-
         while (!stack.isEmpty()) {
             postfixExpr.add(stack.pop());
-        } // Заносим все оставшиеся операторы из стека в выходную строку
+        }
 
         return postfixExpr;
     }
 
     private double calc(ArrayList<Token> postfixExpr) {
-        Stack<Double> locals = new Stack<>(); // Стек для хранения чисел
+        Stack<Double> digits = new Stack<>();
 
         for (Token c : postfixExpr) {
-            switch (c.getType()) { // Если символ число
-                case "DIGIT" -> locals.push(Double.parseDouble(c.getToken()));
-                case "VAR" -> locals.push((double) variables.get(c.getToken()));
-                case "OP" -> { // Получаем значения из стека в обратном порядке
-                    double second = locals.size() > 0 ? locals.pop() : 0, // Условные оператор
-                            first = locals.size() > 0 ? locals.pop() : 0;
-                    locals.push(execute(c, first, second)); // Получаем результат операции и заносим в стек
+            switch (c.getType()) {
+                case "INT" -> digits.push(Double.parseDouble(c.getValue()));
+                case "VAR" -> digits.push((double) variables.get(c.getValue()));
+                case "OP" -> {
+                    double second = digits.size() > 0 ? digits.pop() : 0,
+                            first = digits.size() > 0 ? digits.pop() : 0;
+                    digits.push(execute(c, first, second));
                 }
             }
         }
 
-        return locals.pop();
+        return digits.pop();
     }
 
     public Map<String, Object> getVariables() {

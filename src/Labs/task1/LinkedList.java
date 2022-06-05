@@ -6,15 +6,7 @@ public class LinkedList {
     private Node first;
     private Node last;
 
-    private static class Node {
-        double data;
-        Node prev;
-        Node next;
 
-        public Node(double data) {
-            this.data = data;
-        }
-    }
 
     public LinkedList() {
         first = null;
@@ -33,27 +25,6 @@ public class LinkedList {
         }
         last = newNode;
         size++;
-    }
-
-    public boolean contains(double data) {
-        for (int i = 0; i < size; i++) {
-            if (get(i) == data) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public double get(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
-        }
-        Node result = first;
-        for (int i = 0; i < index; i++) {
-            result = result.next;
-        }
-
-        return result.data;
     }
 
     @Override
@@ -78,13 +49,7 @@ public class LinkedList {
         size = 0;
     }
 
-    public boolean isEmpty() {
-        return size == 0;
-    }
 
-    public int size() {
-        return size;
-    }
 
     public void remove(double element) {
         for (Node current = first; current.next != null; current = current.next) {
@@ -96,5 +61,23 @@ public class LinkedList {
         }
         first = first.next;
         size--;
+    }
+    public double get(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+        Node result = first;
+        for (int i = 0; i < index; i++) {
+            result = result.next;
+        }
+        System.out.println(result.data);
+        return result.data;
+    }
+    public boolean isEmpty() {
+        if(size == 0){
+            return true;
+        }
+        else
+            return false;
     }
 }

@@ -14,7 +14,7 @@ public class ParserException extends Exception{
     }
 
     public void getInfo(int numLine, int numToken, Token current, String expected) {
-        System.out.printf("Line: %s Token: %d - Expected: %s but received: %s\n",
+        System.out.printf("Error in Line: %s  In Token: %d - Expected: %s but got: %s\n",
                 numLine, numToken, expected, current.getType());
     }
 }

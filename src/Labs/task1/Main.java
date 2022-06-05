@@ -38,8 +38,7 @@ public class Main {
         System.out.println("\n\nИсходный код программы:");
         System.out.println(string);
         System.out.println("\nЗначения лексера:");
-        L lexer = new L(string);
-        //lexer.lexer(string);
+        Lexer lexer = new Lexer(string);
         lexer.printTokens();
         System.out.println("");
 
@@ -52,17 +51,6 @@ public class Main {
             Interpreter interpreter = new Interpreter(lexer.getTokens());
             System.out.println(interpreter);
         }
-        /*L lexer = new L(string);
-
-        P p = new P(lexer.getTokens(), string.length());
-        try {
-            p.lang();
-        } catch (ParserException | IndexOutOfBoundsException ignored) {}
-
-        if (p.correctCode) {
-            I interpreter = new I(lexer.getTokens());
-            System.out.println(interpreter);
-        }*/
     }
 }
 class GrammarException extends Exception {
