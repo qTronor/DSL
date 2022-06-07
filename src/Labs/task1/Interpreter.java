@@ -187,6 +187,9 @@ public class Interpreter {
         int startExpr = iterator + 1;
 
         while (!trans.equals(currentToken.getType())) {
+            if("RANDOM".equals(currentToken.getType())){
+
+            }
             if ("COMMA".equals(currentToken.getType())) {
                 double rez = calc(convertToPostfix(infixExpr, startExpr, iterator));
                 variables.put(infixExpr.get(indexVar).getValue(), rez);

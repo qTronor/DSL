@@ -36,17 +36,17 @@ public class Parser {
         switch (curToken.getType()) {
             case "VAR" -> {
                 if (Objects.equals(tokens.get(iterator + 1).getType(), "DOT")) { // Работа со списком
-                    list_op();
+                    list_operations();
                 } else {
                     expr_assign();  // Присваивание
                 }
             }
-            case "LIST" -> list_initialize(); // Снициализация списка
+            case "LIST" -> list_initialize(); // Инициализация списка
+            case "PRINT" -> print();
             case "IF" -> if_op();
             case "WHILE" -> while_op();
             case "DO" -> do_while_op();
             case "FOR" -> for_op();
-            case "PRINT" -> print();
             default -> checkError("VAR");
         }
     }
@@ -206,7 +206,7 @@ public class Parser {
         checkError("VAR");
     }
 
-    public void list_op() {
+    public void list_operations() {
         checkError("VAR");
         checkError("DOT");
         switch (curToken.getType()) {
