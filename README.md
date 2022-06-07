@@ -2,5 +2,10 @@
 
 " Labs for 'Development of Domain-Specific Programming Languages' "
 
-This repository is created to save works for the DoDSPL from the second year in RTU MIREA.
-In fact, I don't know what I'm going to save here
+This repository is created as course work for the DoDSPL lessons in RTU MIREA.
+The repository includes:
+1. Lexer
+2. Parser
+3. Interpreter
+4. Linked List
+And some supporting classes.
